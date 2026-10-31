@@ -1,12 +1,17 @@
-"""HTTP server of agent-demo (standard library only): GET /healthz and GET /api/info."""
+"""HTTP server of agent-demo (standard library only): GET /healthz, GET /api/info, GET /api/time."""
 
 from __future__ import annotations
 
 import json
 import os
+from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 from . import VERSION
+
+
+def utc_now_iso8601() -> str:
+    return datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
 
 
 def route(path: str) -> tuple[int, dict[str, object]]:
@@ -14,6 +19,8 @@ def route(path: str) -> tuple[int, dict[str, object]]:
         return 200, {"status": "ok"}
     if path == "/api/info":
         return 200, {"app": "agent-demo", "version": VERSION}
+    if path == "/api/time":
+        return 200, {"time": utc_now_iso8601()}
     return 404, {"error": "not found"}
 
 
