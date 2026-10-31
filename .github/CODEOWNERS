@@ -1,0 +1,19 @@
+# Only the owner merges changes of CI, ownership, deployment and secrets: tier T0 of asome-platform's
+# policies/dev.yaml (the dispatcher never enables auto-merge for them, the ruleset `code-owners`
+# requires the code owner's review; the owner's own PRs merge with an admin bypass of that ruleset
+# only). Keep in step with policies/dev.yaml (tests/unit/test_f5_templates.py).
+/.github/ @jochanan-ai/owners
+/CODEOWNERS @jochanan-ai/owners
+/docs/CODEOWNERS @jochanan-ai/owners
+/.gitmodules @jochanan-ai/owners
+/deploy/ @jochanan-ai/owners
+/infra/ @jochanan-ai/owners
+/SECURITY.md @jochanan-ai/owners
+/docs/security/ @jochanan-ai/owners
+/secrets/ @jochanan-ai/owners
+/.env @jochanan-ai/owners
+/.env.* @jochanan-ai/owners
+*.pem @jochanan-ai/owners
+*.key @jochanan-ai/owners
+*.p12 @jochanan-ai/owners
+*.jks @jochanan-ai/owners

@@ -1,0 +1,111 @@
+# CI of an agent repository (asome-platform templates/agent-repo; ARCHITEKTURA kap. 12.4, F5).
+# Required checks (rulesets `ci` and `test-guard`, source GitHub Actions only):
+#   ci          the PR's tests with coverage, the image built (nothing is pushed)
+#   test-guard  base and PR compared: fewer tests, more skipped tests or lower coverage fails
+# Read-only token, no secrets, every action pinned to a commit SHA (Renovate updates the pins).
+# The comparison runs the base branch's script, never the PR's; base and PR run in separate jobs,
+# so the PR's code cannot touch the baseline. Changes of .github/ are T0: only the owner merges
+# them (CODEOWNERS), the dispatcher never does.
+name: ci
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    outputs:
+      metrics: ${{ steps.tests.outputs.metrics }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.12"
+      - name: Tests with coverage (dependencies only with hashes or checksums)
+        id: tests
+        run: |
+          .github/scripts/asome_ci.sh test . "$RUNNER_TEMP/head"
+          echo "metrics=$(cat "$RUNNER_TEMP/head/metrics.json")" >> "$GITHUB_OUTPUT"
+      - name: Build the image (not pushed)
+        run: .github/scripts/asome_ci.sh build .
+
+  base-tests:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    outputs:
+      metrics: ${{ steps.tests.outputs.metrics }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.base.sha }}
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.12"
+      - name: Tests of the base (failing tests still give a baseline)
+        id: tests
+        run: |
+          if [ -x .github/scripts/asome_ci.sh ]; then
+            .github/scripts/asome_ci.sh test . "$RUNNER_TEMP/base" || true
+          fi
+          if [ -s "$RUNNER_TEMP/base/metrics.json" ]; then
+            echo "metrics=$(cat "$RUNNER_TEMP/base/metrics.json")" >> "$GITHUB_OUTPUT"
+          else
+            echo 'metrics={}' >> "$GITHUB_OUTPUT"
+          fi
+
+  test-guard:
+    needs: [ci, base-tests]
+    if: always() && github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: base
+          sparse-checkout: .github/scripts
+      - name: Which script compares
+        id: guard
+        run: |
+          if [ -f base/.github/scripts/test_guard.py ]; then
+            echo "path=base/.github/scripts/test_guard.py" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::the base has no test_guard.py yet (the first CI PR): the PR's copy compares"
+            echo "path=pr/.github/scripts/test_guard.py" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        if: steps.guard.outputs.path == 'pr/.github/scripts/test_guard.py'
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha }}
+          path: pr
+          sparse-checkout: .github/scripts
+      - name: Compare base and PR
+        env:
+          CI_RESULT: ${{ needs.ci.result }}
+          BASE_RESULT: ${{ needs.base-tests.result }}
+          BASE_METRICS: ${{ needs.base-tests.outputs.metrics }}
+          HEAD_METRICS: ${{ needs.ci.outputs.metrics }}
+          GUARD: ${{ steps.guard.outputs.path }}
+        run: |
+          if [ "$CI_RESULT" != success ] || [ "$BASE_RESULT" != success ]; then
+            echo "ci=$CI_RESULT base-tests=$BASE_RESULT: no comparison without both runs"
+            exit 1
+          fi
+          printf '%s' "$BASE_METRICS" > "$RUNNER_TEMP/base.json"
+          printf '%s' "$HEAD_METRICS" > "$RUNNER_TEMP/head.json"
+          python3 "$GUARD" compare "$RUNNER_TEMP/base.json" "$RUNNER_TEMP/head.json"
