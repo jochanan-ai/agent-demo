@@ -1,3 +1,6 @@
 # Test dependencies (compile: uv pip compile --generate-hashes --python-version 3.12 --universal
-#   --output-file requirements-dev.lock requirements-dev.in). The app itself needs only the stdlib.
+#   --output-file requirements-dev.lock requirements-dev.in). The app itself needs only the stdlib;
+#   python-dateutil is used by the tests only (ISO 8601 checks), pinned to the newest release that is
+#   at least 7 days old (renovate.json minimumReleaseAge; 4.0.0 is newer than that).
 pytest
+python-dateutil==3.0.0

@@ -5,6 +5,11 @@ description = "The smallest app the asome dev agents work on"
 requires-python = ">=3.12"
 dependencies = []
 
+[project.optional-dependencies]
+# Tests only: the app itself stays on the standard library (Dockerfile). CI installs the
+# hash-pinned requirements-dev.lock, this group documents the same pin for tooling that reads pyproject.
+test = ["python-dateutil==3.0.0"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
