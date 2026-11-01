@@ -104,6 +104,8 @@ jobs:
           command -v skopeo >/dev/null || { sudo apt-get update -q && sudo apt-get install -y -q skopeo; }
           image="ghcr.io/${GITHUB_REPOSITORY,,}"
           printf '%s' "$GH_TOKEN" | skopeo login ghcr.io --username "$ACTOR" --password-stdin
+          # cosign reads the Docker config, not skopeo's auth file (F5 live: "UNAUTHORIZED"), as images.yml
+          printf '%s' "$GH_TOKEN" | cosign login ghcr.io --username "$ACTOR" --password-stdin
           skopeo copy --all --digestfile "$RUNNER_TEMP/digest" "oci-archive:$RUNNER_TEMP/in/image.tar" "docker://$image:sha-$GITHUB_SHA"
           digest=$(cat "$RUNNER_TEMP/digest")
           # cosign takes only its own encrypted key format: import the PEM from stdin under a
@@ -146,6 +148,8 @@ jobs:
           command -v skopeo >/dev/null || { sudo apt-get update -q && sudo apt-get install -y -q skopeo; }
           image="ghcr.io/${GITHUB_REPOSITORY,,}"
           printf '%s' "$GH_TOKEN" | skopeo login ghcr.io --username "$ACTOR" --password-stdin
+          # cosign reads the Docker config, not skopeo's auth file (F5 live: "UNAUTHORIZED"), as images.yml
+          printf '%s' "$GH_TOKEN" | cosign login ghcr.io --username "$ACTOR" --password-stdin
           skopeo copy --all --digestfile "$RUNNER_TEMP/digest" "oci-archive:$RUNNER_TEMP/in/image.tar" "docker://$image:sha-$GITHUB_SHA"
           digest=$(cat "$RUNNER_TEMP/digest")
           cosign sign --yes "$image@$digest"
