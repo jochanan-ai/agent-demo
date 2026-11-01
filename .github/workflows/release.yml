@@ -59,11 +59,19 @@ jobs:
           path: ${{ runner.temp }}/out/
           retention-days: 1
           if-no-files-found: error
+      # Trivy reads an OCI layout directory or a docker archive, not an OCI tar (F5 live: "manifest.json
+      # not found in tar"); unpacked like asome-platform's images.yml
+      - name: Unpack the archive for the scanner
+        if: steps.check.outputs.image == 'true'
+        run: |
+          mkdir "$RUNNER_TEMP/oci"
+          tar -xf "$RUNNER_TEMP/out/image.tar" -C "$RUNNER_TEMP/oci"
+          test -f "$RUNNER_TEMP/oci/index.json"
       - name: Scan (fail on fixable critical/high)
         if: steps.check.outputs.image == 'true'
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
-          input: ${{ runner.temp }}/out/image.tar
+          input: ${{ runner.temp }}/oci
           version: v0.76.1
           ignore-unfixed: true
           severity: CRITICAL,HIGH
