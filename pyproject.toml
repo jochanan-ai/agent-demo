@@ -5,6 +5,11 @@ description = "The smallest app the asome dev agents work on"
 requires-python = ">=3.12"
 dependencies = []
 
+# Test-only dependency (ISO 8601 parsing in tests/test_server.py); the app and its image stay
+# standard-library only. Pinned and installed with hashes through requirements-dev.lock.
+[project.optional-dependencies]
+test = ["python-dateutil==4.0.0"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
