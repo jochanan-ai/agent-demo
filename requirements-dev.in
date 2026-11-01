@@ -1,3 +1,5 @@
 # Test dependencies (compile: uv pip compile --generate-hashes --python-version 3.12 --universal
-#   --output-file requirements-dev.lock requirements-dev.in). The app itself needs only the stdlib.
+#   --output-file requirements-dev.lock requirements-dev.in). The app itself needs only the stdlib,
+#   so the image installs nothing; python-dateutil is used by the tests only (ISO 8601 parsing).
 pytest
+python-dateutil==4.0.0
