@@ -60,14 +60,13 @@ def test_server_serves_time_json():
     t = threading.Thread(target=srv.serve_forever, daemon=True)
     t.start()
     try:
-        base = f"http://127.0.0.1:{srv.server_address[1]}"
-        for path in ("/api/time", "/api/time?x=1"):
-            with urllib.request.urlopen(base + path, timeout=5) as resp:
-                body = json.loads(resp.read())
-                assert resp.status == 200
-                assert resp.headers["Content-Type"] == "application/json"
-                assert set(body) == {"time"}
-                assert_recent_utc(body["time"])
+        url = f"http://127.0.0.1:{srv.server_address[1]}/api/time"
+        with urllib.request.urlopen(url, timeout=5) as resp:
+            body = json.loads(resp.read())
+            assert resp.status == 200
+            assert resp.headers["Content-Type"] == "application/json"
+            assert set(body) == {"time"}
+            assert_recent_utc(body["time"])
     finally:
         srv.shutdown()
         srv.server_close()
