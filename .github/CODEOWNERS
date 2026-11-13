@@ -17,3 +17,12 @@
 *.key @jochanan-ai/owners
 *.p12 @jochanan-ai/owners
 *.jks @jochanan-ai/owners
+# Configuration agent tools load from the repository and run (hooks, plugins, MCP servers, agent
+# types), in any directory (no leading slash)
+.agents/ @jochanan-ai/owners
+.openhands/ @jochanan-ai/owners
+.opencode/ @jochanan-ai/owners
+opencode.json @jochanan-ai/owners
+opencode.jsonc @jochanan-ai/owners
+.claude/ @jochanan-ai/owners
+.mcp.json @jochanan-ai/owners

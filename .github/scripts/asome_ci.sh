@@ -61,7 +61,11 @@ verify_gradle_wrapper() {
   url="$(sed -n 's/^distributionUrl=//p' "$props" | sed 's/\\:/:/g')"
   [[ "$url" == https://services.gradle.org/distributions/gradle-*.zip ]] || { echo "distributionUrl mimo services.gradle.org: $url"; return 1; }
   version="$(sed -E 's#.*/gradle-(.+)-(bin|all)\.zip$#\1#' <<<"$url")"
-  want="$(curl -fsSL "https://services.gradle.org/distributions/gradle-$version-wrapper.jar.sha256")" || return 1
+  # the reference sum itself (no file is used from here); retried like scripts/fetch.sh of asome-platform,
+  # GitHub's CDN behind services.gradle.org answers 504 in 15-20 s windows (2026-11-09)
+  want="$(curl -fsSL --proto '=https' --proto-redir '=https' --retry 6 --retry-delay 5 --retry-all-errors \
+    --retry-max-time 180 --connect-timeout 20 --speed-limit 1024 --speed-time 60 "https://services.gradle.org/distributions/gradle-$version-wrapper.jar.sha256")" || return 1
+  [[ "$want" =~ ^[0-9a-f]{64}$ ]] || { echo "gradle-wrapper.jar: neplatný referenční sha256 pro Gradle $version"; return 1; }
   have="$(sha256sum "$dir/gradle/wrapper/gradle-wrapper.jar" | cut -d' ' -f1)"
   [[ "$want" == "$have" ]] || { echo "gradle-wrapper.jar neodpovídá Gradle $version"; return 1; }
 }
