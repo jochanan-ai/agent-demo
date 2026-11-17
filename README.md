@@ -2,7 +2,9 @@
 
 Nejmenší aplikace, na které pracují vývojoví agenti asome (asome-platform, fáze F5).
 
-- `make test` – testy (závislosti jen s hashi z `requirements-dev.lock`).
+- `make test` – testy (závislosti jen s hashi z `requirements-dev.lock`, který obsahuje i runtime
+  závislosti z `pyproject.toml`; recompilace: `uv pip compile --generate-hashes --python-version 3.12
+  --universal --output-file requirements-dev.lock requirements-dev.in pyproject.toml`).
 - `make run` – server na portu 8080: `GET /healthz`, `GET /api/info`, `GET /api/time` (aktuální UTC čas v ISO 8601),
   `GET /api/version` (verze aplikace).
 - Úkol pro agenty: issue se štítkem `agent:todo` (dá ho vlastník) nebo `/task` v dev botovi.
