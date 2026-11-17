@@ -1,4 +1,5 @@
-"""HTTP server of agent-demo (standard library only): GET /healthz, GET /api/info, GET /api/time."""
+"""HTTP server of agent-demo (standard library only): GET /healthz, GET /api/info, GET /api/time,
+GET /api/version."""
 
 from __future__ import annotations
 
@@ -21,6 +22,8 @@ def route(path: str) -> tuple[int, dict[str, object]]:
         return 200, {"app": "agent-demo", "version": VERSION}
     if path == "/api/time":
         return 200, {"time": utc_now_iso8601()}
+    if path == "/api/version":
+        return 200, {"version": VERSION}
     return 404, {"error": "not found"}
 
 

@@ -28,6 +28,7 @@ def assert_recent_utc(text: str) -> None:
 def test_routes():
     assert route("/healthz") == (200, {"status": "ok"})
     assert route("/api/info") == (200, {"app": "agent-demo", "version": VERSION})
+    assert route("/api/version") == (200, {"version": VERSION})
     assert route("/nope")[0] == 404
 
 
@@ -40,6 +41,13 @@ def test_time_route():
     assert status == 200
     assert set(body) == {"time"}
     assert_recent_utc(str(body["time"]))
+
+
+def test_version_route():
+    status, body = route("/api/version")
+    assert status == 200
+    assert set(body) == {"version"}
+    assert body["version"] == VERSION
 
 
 def test_server_answers_json():
@@ -67,6 +75,23 @@ def test_server_serves_time_json():
             assert resp.headers["Content-Type"] == "application/json"
             assert set(body) == {"time"}
             assert_recent_utc(body["time"])
+    finally:
+        srv.shutdown()
+        srv.server_close()
+
+
+def test_server_serves_version_json():
+    srv = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+    t = threading.Thread(target=srv.serve_forever, daemon=True)
+    t.start()
+    try:
+        url = f"http://127.0.0.1:{srv.server_address[1]}/api/version?x=1"
+        with urllib.request.urlopen(url, timeout=5) as resp:
+            body = json.loads(resp.read())
+            assert resp.status == 200
+            assert resp.headers["Content-Type"] == "application/json"
+            assert set(body) == {"version"}
+            assert body["version"] == VERSION
     finally:
         srv.shutdown()
         srv.server_close()
