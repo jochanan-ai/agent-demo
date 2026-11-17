@@ -1,18 +1,29 @@
 """HTTP server of agent-demo (standard library only): GET /healthz, GET /api/info, GET /api/time,
-GET /api/version."""
+GET /api/version, GET /api/uptime."""
 
 from __future__ import annotations
 
 import json
 import os
+import time
 from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 from . import VERSION
 
+# Uptime reference point: the module is imported when the server process starts (`python -m
+# app.server`), so this is the start of the server serving the routes below.
+SERVER_START_MONOTONIC = time.monotonic()
+
 
 def utc_now_iso8601() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
+
+
+def uptime_seconds(now: float | None = None) -> int:
+    """Whole seconds since the server started. The monotonic clock is the reference, so a wall
+    clock jump (NTP, DST) cannot make the uptime negative."""
+    return max(0, int((time.monotonic() if now is None else now) - SERVER_START_MONOTONIC))
 
 
 def route(path: str) -> tuple[int, dict[str, object]]:
@@ -24,6 +35,8 @@ def route(path: str) -> tuple[int, dict[str, object]]:
         return 200, {"time": utc_now_iso8601()}
     if path == "/api/version":
         return 200, {"version": VERSION}
+    if path == "/api/uptime":
+        return 200, {"uptime_seconds": uptime_seconds()}
     return 404, {"error": "not found"}
 
 
