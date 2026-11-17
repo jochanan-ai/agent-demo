@@ -35,6 +35,8 @@ def route(path: str) -> tuple[int, dict[str, object]]:
         return 200, {"time": utc_now_iso8601()}
     if path == "/api/version":
         return 200, {"version": VERSION}
+    if path == "/api/uptime":
+        return 200, {"uptime_seconds": uptime_seconds()}
     return 404, {"error": "not found"}
 
 
