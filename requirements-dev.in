@@ -1,4 +1,0 @@
-# Test dependencies (compile: uv pip compile --generate-hashes --python-version 3.12 --universal
-#   --output-file requirements-dev.lock requirements-dev.in pyproject.toml - so the lock also pins
-#   the app's runtime dependencies from [project] dependencies of pyproject.toml).
-pytest
