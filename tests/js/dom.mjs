@@ -6,6 +6,21 @@
  * APIs main.js touches are implemented — nothing of the page logic is stubbed.
  */
 
+class TextNode {
+  constructor(text) {
+    this.text = text;
+    this.parentNode = null;
+  }
+
+  get textContent() {
+    return this.text;
+  }
+
+  set textContent(value) {
+    this.text = String(value);
+  }
+}
+
 class Element {
   constructor(tag, attrs = {}, children = []) {
     this.tagName = tag.toUpperCase();
@@ -16,6 +31,29 @@ class Element {
     for (const child of children) {
       child.parentNode = this;
     }
+  }
+
+  get textContent() {
+    return this.childNodes.map((child) => child.textContent).join("");
+  }
+
+  set textContent(value) {
+    this.childNodes = [new TextNode(String(value))];
+    this.childNodes[0].parentNode = this;
+  }
+
+  // main.js reads and writes image.src directly, so the property mirrors the attribute.
+  get src() {
+    return this.getAttribute("src") || "";
+  }
+
+  set src(value) {
+    this.setAttribute("src", value);
+  }
+
+  getBoundingClientRect() {
+    // no layout in the harness: the page only reads `top`, inherited from <html> (see createEnvironment)
+    return this.__rect ?? this.parentNode?.getBoundingClientRect?.() ?? { top: 0 };
   }
 
   get className() {
@@ -176,16 +214,17 @@ class IntersectionObserver {
   }
 }
 
-class Image {
-  constructor() {
+class ImageStub {
+  constructor(probes) {
     this._src = "";
     this.onload = null;
     this.onerror = null;
+    this._probes = probes;
   }
 
   set src(value) {
     this._src = value;
-    Image.probes.push(this);
+    this._probes.push(this);
   }
 
   get src() {
@@ -198,11 +237,29 @@ class Image {
     if (handler) handler({ type: ok ? "load" : "error" });
   }
 }
-Image.probes = [];
 
-export function createEnvironment({ tree, prefersDark = false, reducedMotion = false, storageFailing = false, innerHeight = 800 }) {
-  const html = new Element("html", tree.attributes, tree.children);
+/** JSON node from index.html (tests/test_page_js.py) -> Element / TextNode instances. */
+function hydrate(node) {
+  if ("text" in node) {
+    return new TextNode(node.text);
+  }
+  return new Element(node.tag, node.attributes ?? {}, (node.children ?? []).map(hydrate));
+}
+
+export function createEnvironment({
+  tree,
+  prefersDark = false,
+  reducedMotion = false,
+  storageFailing = false,
+  innerHeight = 800,
+  onScreen = true,
+}) {
+  const documentElement = hydrate(tree);
+  // the harness has no layout: every element reports its position through <html>
+  documentElement.__rect = onScreen ? { top: 0 } : { top: Number.MAX_SAFE_INTEGER };
   const timers = [];
+  const probes = [];
+  const mediaQueries = [];
 
   const window = {
     innerHeight,
@@ -211,22 +268,39 @@ export function createEnvironment({ tree, prefersDark = false, reducedMotion = f
       const dark = /prefers-color-scheme:\s*dark/.test(query);
       const light = /prefers-color-scheme:\s*light/.test(query);
       const value = reduce ? reducedMotion : light ? !prefersDark : prefersDark;
-      return new MediaQueryList(value);
+      const list = new MediaQueryList(value);
+      list.query = query;
+      mediaQueries.push(list);
+      return list;
     },
     setTimeout: (fn, delay) => {
       timers.push({ fn, delay });
       return timers.length;
     },
     IntersectionObserver,
-    Image,
     localStorage: new Storage(storageFailing),
   };
+  class EnvironmentImage extends ImageStub {
+    constructor() {
+      super(probes);
+    }
+  }
+  window.Image = EnvironmentImage;
 
-  const document = new Element("html", tree.attributes, tree.children);
-  document.documentElement = html;
+  const document = new Element("document", {}, [documentElement]);
+  document.documentElement = documentElement;
   document.readyState = "complete";
   document.defaultView = window;
-  document.getElementById = (id) => html.querySelector(`#${id}`);
+  document.getElementById = (id) => document.querySelector(`#${id}`);
 
-  return { window, document, html, timers, flushTimers: () => timers.splice(0).forEach((t) => t.fn()) };
+  return {
+    window,
+    document,
+    documentElement,
+    html: documentElement,
+    probes,
+    timers,
+    mediaQueries,
+    flushTimers: () => timers.splice(0).forEach((t) => t.fn()),
+  };
 }
