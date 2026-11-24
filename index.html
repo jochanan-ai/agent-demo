@@ -22,11 +22,12 @@
     <!-- Deploy: add <link rel="canonical" href="https://<owner-domain>/" /> and og:image once the
          page has a public URL. -->
     <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="assets/img/favicon.ico" />
+    <link rel="icon" href="assets/img/favicon.ico" sizes="32x32" />
+    <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png" />
     <link rel="manifest" href="site.webmanifest" />
-    <link rel="stylesheet" href="assets/css/styles.css" />
+    <!-- The theme script stays above the stylesheet: it sets data-theme before the first paint,
+         so a saved light choice never flashes the dark colours of the default theme. -->
     <script>
-      // Applied before the first paint so the saved theme never flashes the wrong colours.
       // Dark is the default; only an explicit stored choice switches to light.
       (function () {
         try {
@@ -39,6 +40,7 @@
         }
       })();
     </script>
+    <link rel="stylesheet" href="assets/css/styles.css" />
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
