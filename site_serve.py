@@ -76,7 +76,9 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
     server = build_server(args.host, args.port)
-    print(f"serving {ROOT} on http://{args.host}:{server.server_address[1]}/")  # noqa: T201
+    # flush: the banner is the readiness signal for whoever started the server, and a pipe is
+    # block-buffered by default, so without it the reader waits until the process exits.
+    print(f"serving {ROOT} on http://{args.host}:{server.server_address[1]}/", flush=True)  # noqa: T201
     try:
         server.serve_forever()
     except KeyboardInterrupt:
