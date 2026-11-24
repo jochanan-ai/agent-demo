@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Any
 
 import pytest
-from page_model import collect, text_of, walk
+from page_model import collect, parse_tree, text_of, walk
 
 ROOT = Path(__file__).resolve().parent.parent
 INDEX = ROOT / "index.html"
@@ -35,6 +35,11 @@ def html_text() -> str:
 @pytest.fixture(scope="module")
 def page(html_text: str) -> Any:
     return collect(html_text)
+
+
+@pytest.fixture(scope="module")
+def tree(html_text: str) -> dict[str, Any]:
+    return parse_tree(html_text)
 
 
 def tags_of(page: Any, tag: str) -> list[dict[str, str | None]]:

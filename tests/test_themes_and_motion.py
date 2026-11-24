@@ -34,7 +34,9 @@ def media_blocks(css: str, condition: str) -> str:
 
 
 def declarations_in(css: str, selector: str) -> str:
-    match = re.search(rf"^{selector}\s*\{{(.*?)\n\}}", css, re.M | re.S)
+    # the selector is literal CSS text (`[data-theme="light"]` is a regex character class if
+    # interpolated raw), so it goes into the pattern escaped
+    match = re.search(rf"^{re.escape(selector)}\s*\{{(.*?)\n\}}", css, re.M | re.S)
     assert match, selector
     return match.group(1)
 
@@ -125,7 +127,7 @@ def test_reduced_motion_disables_transitions_and_smooth_scrolling(css: str) -> N
 
 
 def test_hover_effects_exist_for_cards_and_buttons(css: str) -> None:
-    for selector in (r"\.card:hover", r"\.button:hover", r"\.tag:hover", r"\.timeline__item:hover"):
+    for selector in (".card:hover", ".button:hover", ".tag:hover", ".timeline__item:hover"):
         declarations = declarations_in(css, selector)
         assert "transform" in declarations or "box-shadow" in declarations, selector
 

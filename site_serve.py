@@ -1,4 +1,4 @@
-"""Local static server for the one-page site: `python -m site_serve` (or `make run`).
+"""Local static server for the one-page site: `python -m site_serve` (or `make serve`).
 
 The page itself needs no server — opening index.html in a browser works. This module only gives a
 convenience URL (http://127.0.0.1:8080/) with the correct MIME types, and it serves nothing but

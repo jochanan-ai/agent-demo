@@ -28,8 +28,10 @@
     <!-- The theme script stays above the stylesheet: it sets data-theme before the first paint,
          so a saved light choice never flashes the dark colours of the default theme. -->
     <script>
-      // Dark is the default; only an explicit stored choice switches to light.
+      // Dark is the default; only an explicit stored choice switches to light. The `js` class is
+      // what the reveal styles hang on: without JavaScript the sections stay visible.
       (function () {
+        document.documentElement.classList.add("js");
         try {
           var stored = localStorage.getItem("theme");
           if (stored === "light" || stored === "dark") {
