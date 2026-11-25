@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>[Name] — Software engineer</title>
+    <meta
+      name="description"
+      content="Personal one-page website of [Name], software engineer: experience, skills and projects."
+    />
+    <meta name="author" content="[Name]" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="theme-color" content="#0b1020" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f7f8fb" media="(prefers-color-scheme: light)" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="[Name] — Software engineer" />
+    <meta
+      property="og:description"
+      content="Personal one-page website of [Name], software engineer: experience, skills and projects."
+    />
+    <meta name="twitter:card" content="summary" />
+    <!-- Deploy: add <link rel="canonical" href="https://<owner-domain>/" /> and og:image once the
+         page has a public URL. -->
+    <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="assets/img/favicon.ico" sizes="32x32" />
+    <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png" />
+    <link rel="manifest" href="site.webmanifest" />
+    <!-- The theme script stays above the stylesheet: it sets data-theme before the first paint,
+         so a saved light choice never flashes the dark colours of the default theme. -->
+    <script>
+      // Dark is the default; only an explicit stored choice switches to light. The `js` class is
+      // what the reveal styles hang on: without JavaScript the sections stay visible.
+      (function () {
+        document.documentElement.classList.add("js");
+        try {
+          var stored = localStorage.getItem("theme");
+          if (stored === "light" || stored === "dark") {
+            document.documentElement.setAttribute("data-theme", stored);
+          }
+        } catch (e) {
+          /* private mode: keep the default (dark) */
+        }
+      })();
+    </script>
+    <link rel="stylesheet" href="assets/css/styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <p class="draft-note" role="status">
+      Draft — the biography text is still pending the owner's CV. Fields marked
+      <code>[…]</code> are placeholders.
+    </p>
+
+    <header class="site-header">
+      <div class="wrap site-header__inner">
+        <a class="brand" href="#top">[Name]</a>
+        <nav class="site-nav" aria-label="Main">
+          <ul>
+            <li><a href="#about">About</a></li>
+            <li><a href="#experience">Experience</a></li>
+            <li><a href="#skills">Skills</a></li>
+            <li><a href="#projects">Projects</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </nav>
+        <button
+          class="theme-toggle"
+          type="button"
+          id="theme-toggle"
+          aria-pressed="false"
+          aria-label="Switch to light theme"
+          title="Switch to light theme"
+        >
+          <span class="theme-toggle__icon" aria-hidden="true"></span>
+          <span class="theme-toggle__label">Dark</span>
+        </button>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="hero section" id="top" data-reveal>
+        <div class="wrap hero__inner">
+          <div class="hero__content">
+            <p class="eyebrow">Software engineer</p>
+            <h1 class="hero__title">[Name]</h1>
+            <!-- TODO(cv): replace with the headline from the CV / LinkedIn profile. -->
+            <p class="hero__subtitle">[Job title from the CV]</p>
+            <!-- TODO(cv): replace with the summary section of the CV. -->
+            <p class="hero__summary">
+              [One or two sentence summary from the CV.]
+            </p>
+            <ul class="hero__meta">
+              <li>[City, country from the CV]</li>
+              <li>Open to new opportunities</li>
+            </ul>
+            <p class="hero__actions">
+              <a class="button button--primary" href="#contact">Get in touch</a>
+              <a class="button" href="#experience">See my experience</a>
+            </p>
+          </div>
+          <figure class="avatar">
+            <!-- Drop assets/img/profile.jpg (square, at least 640x640) next to the placeholder and
+                 the real photo is used as-is; it is cropped to a circle by CSS. -->
+            <img
+              class="avatar__img"
+              src="assets/img/avatar-placeholder.svg"
+              data-photo-fallback="assets/img/avatar-placeholder.svg"
+              alt="Portrait of [Name]"
+              width="320"
+              height="320"
+            />
+          </figure>
+        </div>
+      </section>
+
+      <section class="section" id="about" data-reveal>
+        <div class="wrap">
+          <h2 class="section__title">About</h2>
+          <!-- TODO(cv): replace with the profile / about section of the CV. -->
+          <p>[Paragraph about you — background, focus and what you want to work on next. From the CV.]</p>
+          <ul class="highlights">
+            <!-- TODO(cv): replace the three highlights with facts from the CV. -->
+            <li class="highlight">
+              <span class="highlight__value">[X+]</span>
+              <span class="highlight__label">years of experience</span>
+            </li>
+            <li class="highlight">
+              <span class="highlight__value">[N]</span>
+              <span class="highlight__label">projects shipped</span>
+            </li>
+            <li class="highlight">
+              <span class="highlight__value">[N]</span>
+              <span class="highlight__label">teams worked with</span>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="section" id="experience" data-reveal>
+        <div class="wrap">
+          <h2 class="section__title">Experience</h2>
+          <ol class="timeline">
+            <!-- TODO(cv): one <li class="timeline__item"> per position of the CV, newest first. -->
+            <li class="timeline__item">
+              <header class="timeline__header">
+                <h3>[Role from the CV]</h3>
+                <p class="timeline__org">[Company from the CV]</p>
+                <p class="timeline__period">[Start] – [End]</p>
+              </header>
+              <ul class="timeline__bullets">
+                <li>[Achievement from the CV.]</li>
+                <li>[Achievement from the CV.]</li>
+              </ul>
+            </li>
+            <li class="timeline__item">
+              <header class="timeline__header">
+                <h3>[Role from the CV]</h3>
+                <p class="timeline__org">[Company from the CV]</p>
+                <p class="timeline__period">[Start] – [End]</p>
+              </header>
+              <ul class="timeline__bullets">
+                <li>[Achievement from the CV.]</li>
+                <li>[Achievement from the CV.]</li>
+              </ul>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="section" id="skills" data-reveal>
+        <div class="wrap">
+          <h2 class="section__title">Skills</h2>
+          <!-- TODO(cv): one group per skill category of the CV, tags per skill. -->
+          <div class="skill-groups">
+            <section class="skill-group">
+              <h3>[Category from the CV]</h3>
+              <ul class="tags">
+                <li class="tag">[Skill]</li>
+                <li class="tag">[Skill]</li>
+                <li class="tag">[Skill]</li>
+              </ul>
+            </section>
+            <section class="skill-group">
+              <h3>[Category from the CV]</h3>
+              <ul class="tags">
+                <li class="tag">[Skill]</li>
+                <li class="tag">[Skill]</li>
+                <li class="tag">[Skill]</li>
+              </ul>
+            </section>
+            <section class="skill-group">
+              <h3>[Category from the CV]</h3>
+              <ul class="tags">
+                <li class="tag">[Skill]</li>
+                <li class="tag">[Skill]</li>
+                <li class="tag">[Skill]</li>
+              </ul>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="projects" data-reveal>
+        <div class="wrap">
+          <h2 class="section__title">Projects</h2>
+          <!-- TODO(cv): one card per project of the CV / LinkedIn featured section. -->
+          <div class="cards">
+            <article class="card">
+              <h3>[Project name]</h3>
+              <p>[What the project does and your role — from the CV.]</p>
+              <ul class="tags tags--small">
+                <li class="tag">[Tech]</li>
+                <li class="tag">[Tech]</li>
+              </ul>
+            </article>
+            <article class="card">
+              <h3>[Project name]</h3>
+              <p>[What the project does and your role — from the CV.]</p>
+              <ul class="tags tags--small">
+                <li class="tag">[Tech]</li>
+                <li class="tag">[Tech]</li>
+              </ul>
+            </article>
+            <article class="card">
+              <h3>[Project name]</h3>
+              <p>[What the project does and your role — from the CV.]</p>
+              <ul class="tags tags--small">
+                <li class="tag">[Tech]</li>
+                <li class="tag">[Tech]</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="contact" data-reveal>
+        <div class="wrap">
+          <h2 class="section__title">Contact</h2>
+          <p>
+            The contact details are still to be provided by the owner. Nothing here is clickable
+            until then, and there is no contact form on purpose.
+          </p>
+          <!-- TODO(owner): e-mail address arrives in a later comment; obfuscate it against
+               scraping bots at that time (no plain mailto: before that). -->
+          <dl class="contact">
+            <div class="contact__row">
+              <dt>E-mail</dt>
+              <dd>
+                <span class="contact__placeholder">[e-mail — to be provided by the owner]</span>
+              </dd>
+            </div>
+            <!-- TODO(owner): LinkedIn URL arrives in a later comment; until then it stays plain
+                 text without an address. -->
+            <div class="contact__row">
+              <dt>LinkedIn</dt>
+              <dd>
+                <span class="contact__placeholder">
+                  [LinkedIn profile — link to be provided by the owner]
+                </span>
+              </dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap site-footer__inner">
+        <p>© <span id="year">2026</span> [Name]. All rights reserved.</p>
+        <p class="site-footer__note">Built with plain HTML, CSS and JavaScript — no frameworks.</p>
+      </div>
+    </footer>
+
+    <script src="assets/js/main.js" defer></script>
+  </body>
+</html>

@@ -1,9 +1,9 @@
 [project]
-name = "agent-demo"
+name = "personal-site"
 version = "0.1.0"
-description = "The smallest app the asome dev agents work on"
+description = "Personal one-page website of a programmer (static HTML, CSS and JavaScript)"
 requires-python = ">=3.12"
-dependencies = ["requests==2.32.3"]
+# The site is static: no runtime dependencies. Tests run on pytest only (requirements-dev.lock).
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -1,4 +1,3 @@
-# Test dependencies (compile: uv pip compile --generate-hashes --python-version 3.12 --universal
-#   --output-file requirements-dev.lock requirements-dev.in pyproject.toml - so the lock also pins
-#   the app's runtime dependencies from [project] dependencies of pyproject.toml).
-pytest
+# Dev dependencies of the static site: pytest only (the page itself has no dependencies).
+# Regenerate: pip-compile --generate-hashes --strip-extras -o requirements-dev.lock requirements-dev.in
+pytest==8.3.4

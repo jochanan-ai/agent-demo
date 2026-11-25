@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320" role="img" aria-label="Placeholder portrait">
+  <!-- Stand-in for the owner's profile photo (assets/img/profile.jpg). The circle crop is done by
+       CSS (.avatar__img), so this artwork stays a neutral square that reads well on dark and light. -->
+  <defs>
+    <linearGradient id="plate" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4a5b82" />
+      <stop offset="1" stop-color="#31405f" />
+    </linearGradient>
+  </defs>
+  <rect width="320" height="320" fill="url(#plate)" />
+  <g fill="#dce6ff">
+    <circle cx="160" cy="124" r="52" />
+    <path d="M160 188c-53 0-94 30-100 76h200c-6-46-47-76-100-76z" />
+  </g>
+</svg>

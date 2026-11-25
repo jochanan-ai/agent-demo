@@ -1,0 +1,20 @@
+{
+  "name": "[Name] — Software engineer",
+  "short_name": "[Name]",
+  "description": "Personal one-page website of [Name], software engineer.",
+  "lang": "en",
+  "dir": "ltr",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0b1020",
+  "theme_color": "#0b1020",
+  "icons": [
+    {
+      "src": "assets/img/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
